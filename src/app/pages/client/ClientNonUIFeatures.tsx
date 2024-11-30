@@ -146,17 +146,19 @@ function MessageNotifications() {
       roomName,
       roomAvatar,
       username,
+      message,
     }: {
       roomName: string;
       roomAvatar?: string;
       username: string;
       roomId: string;
       eventId: string;
+      message: string;
     }) => {
       const noti = new window.Notification(roomName, {
         icon: roomAvatar,
         badge: roomAvatar,
-        body: `New inbox notification from ${username}`,
+        body: `From ${username}: ${message}`,
         silent: true,
       });
 
@@ -178,7 +180,7 @@ function MessageNotifications() {
   }, []);
 
   useEffect(() => {
-    const handleTimelineEvent: RoomEventHandlerMap[RoomEvent.Timeline] = (
+    const handleTimelineEvent: RoomEventHandlerMap[RoomEvent.Timeline] = async (
       mEvent,
       room,
       toStartOfTimeline,
@@ -215,6 +217,8 @@ function MessageNotifications() {
       if (showNotifications && Notification.permission === 'granted') {
         const avatarMxc =
           room.getAvatarFallbackMember()?.getMxcAvatarUrl() ?? room.getMxcAvatarUrl();
+        if (mEvent.isEncrypted()) await mEvent.getDecryptionPromise();
+        let content = mEvent.getContent();
         notify({
           roomName: room.name ?? 'Unknown',
           roomAvatar: avatarMxc
@@ -223,6 +227,7 @@ function MessageNotifications() {
           username: getMemberDisplayName(room, sender) ?? getMxIdLocalPart(sender) ?? sender,
           roomId: room.roomId,
           eventId,
+          message: content.body,
         });
       }
 
