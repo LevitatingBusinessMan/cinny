@@ -155,10 +155,10 @@ function MessageNotifications() {
       eventId: string;
       message: string;
     }) => {
-      const noti = new window.Notification(roomName, {
+      const noti = new window.Notification(`${username} in ${roomName}`, {
         icon: roomAvatar,
         badge: roomAvatar,
-        body: `From ${username}: ${message}`,
+        body: message,
         silent: true,
       });
 
