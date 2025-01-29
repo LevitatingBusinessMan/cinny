@@ -29,7 +29,7 @@ const KEYWORD = 'keyword';
 
 function useKeywordNotif() {
   const mx = useMatrixClient();
-  const pushRules = useAccountData('pushrules')?.getContent();
+  const pushRules = useAccountData('m.push_rules')?.getContent();
   const override = pushRules?.global?.override ?? [];
   const content = pushRules?.global?.content ?? [];
 
@@ -92,7 +92,7 @@ function useKeywordNotif() {
       });
     }
 
-    mx.setAccountData('pushrules', evtContent);
+    mx.setAccountData('m.push_rules', evtContent);
   };
 
   const addKeyword = (keyword) => {
@@ -104,11 +104,11 @@ function useKeywordNotif() {
       default: false,
       actions: getTypeActions(rulesToType[KEYWORD] ?? notifType.NOISY, true),
     });
-    mx.setAccountData('pushrules', pushRules);
+    mx.setAccountData('m.push_rules', pushRules);
   };
   const removeKeyword = (rule) => {
     pushRules.global.content = content.filter((r) => r.rule_id !== rule.rule_id);
-    mx.setAccountData('pushrules', pushRules);
+    mx.setAccountData('m.push_rules', pushRules);
   };
 
   const dsRule = override.find((rule) => rule.rule_id === DISPLAY_NAME);
